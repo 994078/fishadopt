@@ -17,6 +17,12 @@
 # 待可行性验证确认：pnpm install/build 的精确最小命令（可能收窄为 build:web 等，避开 Electron 桌面构建）。
 set -euo pipefail
 
+# ---- 权限检查：debootstrap / chroot 需要 root ----
+if [ "$(id -u)" -ne 0 ]; then
+  echo "[错误] 本脚本需要 root 权限（debootstrap/chroot 要求）。请用：sudo bash rootfs/build_rootfs.sh"
+  exit 1
+fi
+
 # ---- 可配置参数 ----
 ARCH="${ARCH:-arm64}"
 SUITE="${SUITE:-bookworm}"

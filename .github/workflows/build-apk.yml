@@ -36,11 +36,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y debootstrap zstd git tar curl xz-utils
 
-      - name: 构建 RootFS（原生 arm64）
+      - name: 构建 RootFS（原生 arm64，需 root 权限跑 debootstrap/chroot）
         env:
           DSH_REPO: ${{ github.event.inputs.dsh_repo }}
           DSH_VERSION: ${{ github.event.inputs.dsh_version }}
-        run: bash rootfs/build_rootfs.sh
+        run: sudo bash rootfs/build_rootfs.sh
 
       - name: 上传 RootFS 产物
         uses: actions/upload-artifact@v4
