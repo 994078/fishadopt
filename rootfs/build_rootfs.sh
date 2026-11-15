@@ -58,12 +58,12 @@ else
   chroot "$ROOTFS" /debootstrap/debootstrap --second-stage
 fi
 
-echo "==> 2/7 安装基础依赖（不含 Debian 自带 node，版本太旧）"
+echo "==> 2/7 安装基础依赖（含 build-essential 供 DSH 原生模块 flock.c 编译）"
 chroot "$ROOTFS" /bin/bash -c '
   export DEBIAN_FRONTEND=noninteractive
   apt-get update
   apt-get install -y --no-install-recommends \
-    git python3 ca-certificates curl bash coreutils xz-utils
+    git python3 ca-certificates curl bash coreutils xz-utils build-essential
 '
 
 echo "==> 3/7 下载官方 Node $NODE_VERSION (arm64) 并安装到 /usr/local"
@@ -72,7 +72,15 @@ curl -fL "https://nodejs.org/dist/v${NODE_VERSION}/${NODE_TARBALL}" -o "/tmp/${N
 mkdir -p "$ROOTFS/usr/local"
 tar -xJf "/tmp/${NODE_TARBALL}" -C "$ROOTFS/usr/local" --strip-components=1
 rm -f "/tmp/${NODE_TARBALL}"
+
+# DSH 原生模块构建按 `dirname(process.execPath)/../include/node` 定位 Node 头文件，
+# 在 chroot 内实测 process.execPath 解析到 /root/bin/node，故在 /root 下补 node 与头文件软链
+mkdir -p "$ROOTFS/root/bin" "$ROOTFS/root/include"
+ln -sf /usr/local/bin/node "$ROOTFS/root/bin/node"
+ln -sfn /usr/local/include/node "$ROOTFS/root/include/node"
+
 chroot "$ROOTFS" /usr/local/bin/node --version
+chroot "$ROOTFS" /usr/local/bin/node -p "'execPath=' + process.execPath"
 
 echo "==> 4/7 安装 pnpm $PNPM_VERSION"
 chroot "$ROOTFS" /usr/local/bin/npm install -g "pnpm@${PNPM_VERSION}"
