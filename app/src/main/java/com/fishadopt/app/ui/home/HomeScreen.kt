@@ -1,7 +1,8 @@
 package com.fishadopt.app.ui.home
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,7 +43,7 @@ fun HomeScreen(
     onOpenSettings: () -> Unit,
 ) {
     val vm: HomeViewModel = viewModel(factory = AppViewModelFactory(container))
-    val activity = LocalActivity.current
+    val activity = LocalContext.current as? Activity
 
     val envState by vm.environmentState.collectAsState()
     val svcState by vm.serviceState.collectAsState()

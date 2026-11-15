@@ -54,7 +54,7 @@ class ProotProcessManager(
         val proc = pb.start()
         process = proc
         startStdoutReader(proc.inputStream)
-        log.info("已启动 proot 进程，PID=${proc.pid()}")
+        log.info("已启动 proot 进程")
         return true
     }
 
