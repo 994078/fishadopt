@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一键领养小肥鱼（PC 版）</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 欢迎与声明 -->
+<section id="screen-welcome" class="screen center">
+  <h1>一键领养小肥鱼</h1>
+  <p class="tagline">在本机启动原版 DeepSeek Harness（社区称“小肥鱼”），无需命令。</p>
+  <p class="muted">本产品为第三方爱好者工具，与 DeepSeek 官方无关，不提供算力与模型调用额度。</p>
+  <p class="muted small">本应用内置 DSH（MIT）、proot-rs（GPLv2）等开源组件，详情见“关于”。</p>
+  <button class="primary" onclick="finishWelcome()">我已了解</button>
+</section>
+
+<!-- 环境检查向导（PC 版对应安卓权限向导） -->
+<section id="screen-onboarding" class="screen">
+  <h2>环境检查向导</h2>
+  <div id="onboarding-list" class="list"></div>
+  <div class="spacer"></div>
+  <button class="primary block" onclick="finishOnboarding()">完成</button>
+  <button class="ghost block" onclick="finishOnboarding()">稍后再说</button>
+</section>
+
+<!-- 主控制页 -->
+<section id="screen-home" class="screen center">
+  <h1>一键领养小肥鱼</h1>
+  <div class="spacer"></div>
+  <button id="main-btn" class="primary big" onclick="mainAction()">准备环境</button>
+  <div class="spacer-sm"></div>
+  <p id="status-line" class="muted">环境未准备</p>
+  <div id="progress-wrap" class="progress hidden">
+    <div id="progress-bar" class="progress-bar"></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="row">
+    <button class="ghost" onclick="show('logs')">日志</button>
+    <button class="ghost" onclick="show('settings')">设置</button>
+  </div>
+</section>
+
+<!-- 对话界面 -->
+<section id="screen-chat" class="screen full">
+  <div class="bar">
+    <button class="ghost" onclick="confirmBack()">返回控制页</button>
+    <span class="bar-title">对话界面</span>
+    <span></span>
+  </div>
+  <div id="chat-status" class="chat-status hidden"></div>
+  <iframe id="chat-frame" src="about:blank"></iframe>
+</section>
+
+<!-- 日志 -->
+<section id="screen-logs" class="screen">
+  <div class="bar">
+    <button class="ghost" onclick="show('home')">返回</button>
+    <span class="bar-title">日志</span>
+    <span class="row">
+      <button class="ghost" id="pause-btn" onclick="togglePause()">暂停</button>
+      <button class="ghost" onclick="clearLogs()">清空</button>
+      <button class="ghost" onclick="copyLogs()">复制</button>
+      <button class="ghost" onclick="exportLogs()">导出</button>
+    </span>
+  </div>
+  <div id="log-list" class="log-list"></div>
+  <p id="log-msg" class="muted small"></p>
+</section>
+
+<!-- 设置 -->
+<section id="screen-settings" class="screen scroll">
+  <div class="bar">
+    <button class="ghost" onclick="show('home')">返回</button>
+    <span class="bar-title">设置</span>
+  </div>
+  <div class="group">
+    <h3>密钥管理</h3>
+    <p id="key-display" class="muted">尚未填写 API Key</p>
+    <input type="password" id="key-input" placeholder="API Key（sk-…）" class="input">
+    <div class="row">
+      <button class="primary" onclick="saveKey()">保存</button>
+      <button class="ghost" onclick="confirmClearKey()">清除</button>
+    </div>
+  </div>
+  <div class="group">
+    <div class="switch-row"><span>崩溃自动重启</span><label class="switch"><input type="checkbox" id="s-auto"><span class="slider"></span></label></div>
+    <div class="switch-row"><span>后台保活</span><label class="switch"><input type="checkbox" id="s-keep"><span class="slider"></span></label></div>
+    <div class="switch-row"><span>通知</span><label class="switch"><input type="checkbox" id="s-notif"><span class="slider"></span></label></div>
+  </div>
+  <div class="group">
+    <button class="ghost block" onclick="show('onboarding')">重新运行环境向导</button>
+    <button class="ghost block" onclick="confirmReset()">重置运行环境</button>
+    <button class="ghost block" onclick="show('logs')">日志</button>
+    <button class="ghost block" onclick="show('about')">关于</button>
+  </div>
+</section>
+
+<!-- 关于 -->
+<section id="screen-about" class="screen scroll">
+  <div class="bar">
+    <button class="ghost" onclick="show('settings')">返回</button>
+    <span class="bar-title">关于</span>
+  </div>
+  <div class="group">
+    <h3>产品信息</h3>
+    <p>一键领养小肥鱼 <span class="muted">版本 1.0.0（PC 演示版）</span></p>
+  </div>
+  <div class="group">
+    <h3>第三方无关声明</h3>
+    <p class="muted small">本应用为第三方爱好者工具，基于 DeepSeek Harness 二次封装，非 DeepSeek 官方产品，不提供任何算力与模型额度。使用本应用产生的模型调用费用由用户自行承担。受系统机制限制，后台运行无法保证持续稳定。</p>
+  </div>
+  <div class="group">
+    <h3>开源组件</h3>
+    <p class="muted small">DeepSeek Harness（MIT）、proot-rs（GPLv2）、zstd-jni（BSD-2）、Apache Commons Compress（Apache-2.0）、AndroidX（Apache-2.0）。完整许可文本见工程 app/src/main/assets/licenses/。</p>
+  </div>
+  <div class="group">
+    <h3>已知限制</h3>
+    <p class="muted small">• 安卓版后台保活为“尽力而为”；PC 版为演示用途。<br>• 安卓版仅 arm64-v8a / Android 12–15。</p>
+  </div>
+</section>
+
+<div id="dialog" class="dialog hidden">
+  <div class="dialog-box">
+    <p id="dialog-text"></p>
+    <div class="row" id="dialog-actions"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

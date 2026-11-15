@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">一键领养小肥鱼</string>
+
+    <!-- 欢迎与声明 -->
+    <string name="welcome_title">一键领养小肥鱼</string>
+    <string name="welcome_tagline">在本机启动原版 DeepSeek Harness（社区称“小肥鱼”），无需电脑、无需命令。</string>
+    <string name="welcome_disclaimer">本产品为第三方爱好者工具，与 DeepSeek 官方无关，不提供算力与模型调用额度。</string>
+    <string name="welcome_license_notice">本应用内置 DSH（MIT 协议）与 proot-rs（GPLv2 协议）等开源组件，详情见“关于”页。</string>
+    <string name="welcome_got_it">我已了解</string>
+
+    <!-- 权限向导 -->
+    <string name="onboarding_title">授权向导</string>
+    <string name="permission_storage_title">文件访问</string>
+    <string name="permission_storage_reason">需要把运行环境（RootFS）存放在应用私有目录，并在你导出日志时写入文件。</string>
+    <string name="permission_notification_title">通知</string>
+    <string name="permission_notification_reason">常驻通知用于展示运行状态，并可一键停止小肥鱼。</string>
+    <string name="permission_battery_title">电池优化</string>
+    <string name="permission_battery_reason">不关闭电池优化，小肥鱼在后台极易被系统清理。</string>
+    <string name="permission_grant">去开启</string>
+    <string name="permission_granted">已开启</string>
+    <string name="permission_missing">未开启</string>
+    <string name="permission_done">完成</string>
+    <string name="permission_skip">稍后再说</string>
+
+    <!-- 主控制页按钮文案 -->
+    <string name="btn_prepare">准备环境</string>
+    <string name="btn_adopt">一键领养小肥鱼</string>
+    <string name="btn_stop">停止小肥鱼</string>
+    <string name="stage_preparing_env">正在准备环境</string>
+    <string name="stage_starting_container">正在启动容器</string>
+    <string name="stage_waiting_service">正在等待服务</string>
+    <string name="stage_loading_ui">正在加载界面</string>
+
+    <!-- 退出弹窗 -->
+    <string name="exit_title">小肥鱼仍在运行</string>
+    <string name="exit_message">请选择退出方式：</string>
+    <string name="exit_background">后台继续运行</string>
+    <string name="exit_stop">停止并退出</string>
+    <string name="exit_cancel">取消</string>
+
+    <!-- 通用 -->
+    <string name="retry">重试</string>
+    <string name="view_logs">查看日志</string>
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="back">返回</string>
+</resources>

@@ -1,0 +1,40 @@
+name: DSH 可行性验证
+
+# 在 Linux 上验证"手机 proot 跑官方 DSH Web 模式"是否可行。
+# 不产出 APK，只产出可行性报告（build/feasibility/report.md）作为 artifact。
+on:
+  workflow_dispatch:
+    inputs:
+      dsh_repo:
+        description: 'DSH 仓库地址'
+        required: false
+        default: 'https://github.com/deepseek-ai/deepseek-harness.git'
+
+jobs:
+  feasibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: 安装 pnpm（通过 corepack）
+        run: corepack enable && corepack prepare pnpm@11.28.5 --activate
+
+      - name: 运行可行性验证脚本
+        env:
+          DSH_REPO: ${{ github.event.inputs.dsh_repo }}
+        run: bash packaging/feasibility-check.sh
+
+      - name: 上传可行性报告
+        uses: actions/upload-artifact@v4
+        with:
+          name: feasibility-report
+          path: |
+            build/feasibility/report.md
+            build/feasibility/web.log
+          retention-days: 14

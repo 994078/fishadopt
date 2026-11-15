@@ -1,0 +1,13 @@
+{
+  "name": "fishadopt-pc-launcher",
+  "version": "1.0.0",
+  "private": true,
+  "description": "一键领养小肥鱼 —— PC 版启动器（复刻安卓 APP 的桌面可测版本）",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,29 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- 尾鳍（右侧，收在安全区内） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M66,54 L86,44 L86,64 Z" />
+    <!-- 胖胖的身体（圆） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M34,54 a18,18 0 1,1 36,0 a18,18 0 1,1 -36,0" />
+    <!-- 背鳍 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M46,40 L56,26 L62,42 Z" />
+    <!-- 眼睛 -->
+    <path
+        android:fillColor="#1E7BFF"
+        android:pathData="M41,50 m-3,0 a3,3 0 1,1 6,0 a3,3 0 1,1 -6,0" />
+    <!-- 微笑 -->
+    <path
+        android:strokeColor="#1E7BFF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M40,58 Q43,61 46,58" />
+</vector>

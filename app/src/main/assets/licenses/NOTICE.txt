@@ -1,0 +1,35 @@
+开源组件清单与许可
+
+本应用（一键领养小肥鱼）内置并分发以下开源组件，保留其原始版权与许可声明：
+
+1. DeepSeek Harness（DSH）
+   许可：MIT License
+   用途：本应用要启动的核心 Agent 运行时（社区称“小肥鱼”）。
+   完整文本见本页“MIT License”一节。
+
+2. proot-rs
+   许可：GNU General Public License v2.0 (GPLv2)
+   用途：用户态系统调用翻译工具，使 DSH 在安卓内运行 Linux 根文件系统。
+   完整文本见本页“GNU GPL v2”一节。若随安装包分发其二进制，需按 GPLv2 公开相应源码。
+
+3. Debian（arm64 根文件系统组件）
+   许可：各组件按 Debian 原有许可分发
+   用途：预打包的 Linux 运行环境（含 Node.js、git、python3 等）。
+   各组件许可文本随 RootFS 保留，未作修改。
+
+4. zstd-jni（com.github.luben）
+   许可：BSD 2-Clause License
+   用途：RootFS 分卷的 zstd 解压。
+
+5. Apache Commons Compress
+   许可：Apache License 2.0
+   用途：RootFS 的 tar 归档解包。
+
+6. AndroidX（androidx.*，含 Jetpack Compose、security-crypto 等）
+   许可：Apache License 2.0
+   用途：应用外壳 UI、生命周期、加密偏好存储。
+
+第三方无关声明：
+本应用为第三方爱好者工具，基于 DeepSeek Harness 二次封装，非 DeepSeek 官方产品，
+不提供任何算力与模型额度。使用本应用产生的模型调用费用由用户自行承担。
+受安卓系统机制限制，后台运行无法保证持续稳定。
