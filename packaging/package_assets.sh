@@ -54,6 +54,25 @@ else
   echo "    [警告] 未设置 PROOT_RS_URL，跳过下载（请手动放置 $JNI_DIR/libproot_rs.so）"
 fi
 
+# 1.5 zstd-jni 原生库：AGP 解析的是 JAR（无 .so）而非 AAR，需手动置入 arm64 原生库，否则运行时 UnsatisfiedLinkError 闪退
+echo "==> 处理 zstd-jni 原生库"
+ZSTD_JNI_VERSION="1.5.6-5"
+curl -fL "https://repo1.maven.org/maven2/com/github/luben/zstd-jni/${ZSTD_JNI_VERSION}/zstd-jni-${ZSTD_JNI_VERSION}.aar" -o "$BUILD_DIR/zstd-jni.aar"
+python3 -c '
+import zipfile, os, sys
+aar, dst = sys.argv[1], sys.argv[2]
+z = zipfile.ZipFile(aar)
+n = 0
+for name in z.namelist():
+    if name.startswith("jni/arm64-v8a/") and name.endswith(".so"):
+        with open(os.path.join(dst, os.path.basename(name)), "wb") as f:
+            f.write(z.read(name))
+        n += 1
+        print("    置入", os.path.basename(name))
+z.close()
+print("    zstd-jni .so 数量:", n)
+' "$BUILD_DIR/zstd-jni.aar" "$JNI_DIR"
+
 # 2. RootFS 分卷 + 清单
 echo "==> 生成 RootFS 分卷"
 ZST="$BUILD_DIR/rootfs.tar.zst"
