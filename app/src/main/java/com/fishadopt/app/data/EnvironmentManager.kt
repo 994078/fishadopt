@@ -165,7 +165,8 @@ class EnvironmentManager(
 
     private fun decompressZstd(src: File, dst: File) {
         dst.parentFile?.mkdirs()
-        ZstdInputStream(FileInputStream(src)).use { ins ->
+        // setContinuous(true)：zstd -T0 多线程产出多帧流，默认只读第一帧会导致 tar 截断
+        ZstdInputStream(FileInputStream(src)).setContinuous(true).use { ins ->
             FileOutputStream(dst).use { out ->
                 val buf = ByteArray(128 * 1024)
                 while (true) {
