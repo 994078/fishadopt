@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.os.StatFs
 import android.system.Os
+import android.system.ErrnoException
+import android.system.OsConstants
 import com.fishadopt.app.util.Checksum
 import com.fishadopt.app.util.VolumeMerger
 import com.fishadopt.app.util.VolumeSource
@@ -195,7 +197,11 @@ class EnvironmentManager(
                 when {
                     entry.isSymbolicLink -> {
                         outFile.parentFile?.mkdirs()
-                        Os.symlink(entry.linkName, outFile.absolutePath)
+                        createSymlink(entry.linkName, outFile)
+                    }
+                    entry.isLink -> { // 硬链接（Debian 根文件系统存在，避免按空文件处理）
+                        outFile.parentFile?.mkdirs()
+                        createHardlink(File(dest, entry.linkName), outFile)
                     }
                     entry.isDirectory -> outFile.mkdirs()
                     else -> {
@@ -204,6 +210,43 @@ class EnvironmentManager(
                     }
                 }
             }
+        }
+    }
+
+    /** 创建软链接；目标已存在（usrmerge 场景同路径先目录后软链）则先删除再重建。 */
+    private fun createSymlink(target: String, link: File) {
+        try {
+            Os.symlink(target, link.absolutePath)
+        } catch (e: ErrnoException) {
+            if (e.errno == OsConstants.EEXIST) {
+                removeExisting(link)
+                Os.symlink(target, link.absolutePath)
+            } else {
+                throw e
+            }
+        }
+    }
+
+    /** 创建硬链接；目标已存在则先删除再重建。 */
+    private fun createHardlink(target: File, link: File) {
+        try {
+            Os.link(target.absolutePath, link.absolutePath)
+        } catch (e: ErrnoException) {
+            if (e.errno == OsConstants.EEXIST) {
+                removeExisting(link)
+                Os.link(target.absolutePath, link.absolutePath)
+            } else {
+                throw e
+            }
+        }
+    }
+
+    /** 删除已存在的文件/软链（优先 unlink），目录则递归删除。 */
+    private fun removeExisting(f: File) {
+        try {
+            Os.unlink(f.absolutePath)
+        } catch (_: Exception) {
+            f.deleteRecursively()
         }
     }
 
