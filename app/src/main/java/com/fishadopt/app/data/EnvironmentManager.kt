@@ -139,18 +139,28 @@ class EnvironmentManager(
     // ---- 私有实现 ----
 
     private fun listVolumes(): List<VolumeSource> {
-        val names = context.assets.list("")?.filter { it.startsWith("rootfs.zst.") } ?: emptyList()
-        return names
-            .sortedBy { it.substringAfterLast('.').toIntOrNull() ?: Int.MAX_VALUE }
-            .mapNotNull { name ->
-                try {
-                    context.assets.openFd(name).use { fd ->
-                        AssetVolumeSource(context.assets, name, fd.length)
-                    }
-                } catch (_: Exception) {
-                    null
-                }
+        // 从 rootfs_volumes.json 读各分卷大小（Android 对「压缩 asset」调 openFd 会抛异常，故免 openFd）
+        val sizes = readVolumeSizes()
+        return sizes.entries
+            .sortedBy { it.key.substringAfterLast('.').toIntOrNull() ?: Int.MAX_VALUE }
+            .map { (name, size) -> AssetVolumeSource(context.assets, name, size) }
+    }
+
+    private fun readVolumeSizes(): Map<String, Long> {
+        return try {
+            val json = context.assets.open("rootfs_volumes.json")
+                .bufferedReader().use { it.readText() }
+            val obj = org.json.JSONObject(json)
+            val map = mutableMapOf<String, Long>()
+            val keys = obj.keys()
+            while (keys.hasNext()) {
+                val k = keys.next()
+                map[k] = obj.getLong(k)
             }
+            map
+        } catch (_: Exception) {
+            emptyMap()
+        }
     }
 
     private fun decompressZstd(src: File, dst: File) {

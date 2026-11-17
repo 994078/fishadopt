@@ -65,6 +65,18 @@ rm -f "$ASSETS_DIR"/rootfs.zst.*
 split -d -a 3 -b "$CHUNK_SIZE" "$ZST" "$ASSETS_DIR/rootfs.zst."
 echo "    分卷数：$(ls "$ASSETS_DIR"/rootfs.zst.* | wc -l)"
 
+# 生成分卷大小清单 rootfs_volumes.json（{name: size}）。
+# Android 对「压缩 asset」调用 openFd() 会抛异常，APP 侧据此免 openFd 获取大小，改用 assets.open() 流式读取。
+python3 -c '
+import json, os, glob
+vols = {}
+for f in sorted(glob.glob("'"$ASSETS_DIR"'/rootfs.zst.*")):
+    vols[os.path.basename(f)] = os.path.getsize(f)
+with open("'"$ASSETS_DIR"'/rootfs_volumes.json", "w") as fh:
+    json.dump(vols, fh)
+print("    volumes manifest:", len(vols), "entries")
+'
+
 cp "$BUILD_DIR/rootfs_manifest.json" "$ASSETS_DIR/rootfs_manifest.json"
 
 echo "完成：assets 与 jniLibs 已就绪，可执行 packaging/sign_and_build.sh 构建 APK"
