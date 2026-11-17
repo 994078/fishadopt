@@ -47,6 +47,11 @@ android {
         compose = true
     }
 
+    // rootfs 分卷（.zst）本就是 zstd 压缩过的，禁止 aapt2 二次压缩（否则 compressReleaseAssets 爆内存）
+    androidResources {
+        noCompress += "zst"
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"

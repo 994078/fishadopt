@@ -144,7 +144,7 @@ class EnvironmentManager(
         // 从 rootfs_volumes.json 读各分卷大小（Android 对「压缩 asset」调 openFd 会抛异常，故免 openFd）
         val sizes = readVolumeSizes()
         return sizes.entries
-            .sortedBy { it.key.substringAfterLast('.').toIntOrNull() ?: Int.MAX_VALUE }
+            .sortedBy { it.key } // rootfs.NNN.zst 数字零填充，字典序即数字序
             .map { (name, size) -> AssetVolumeSource(context.assets, name, size) }
     }
 
