@@ -241,10 +241,10 @@ class EnvironmentManager(
         }
     }
 
-    /** 删除已存在的文件/软链（优先 unlink），目录则递归删除。 */
+    /** 删除已存在的文件/软链/空目录（Os.remove 对应 libc remove），非空目录则递归删除。 */
     private fun removeExisting(f: File) {
         try {
-            Os.unlink(f.absolutePath)
+            Os.remove(f.absolutePath)
         } catch (_: Exception) {
             f.deleteRecursively()
         }
